@@ -25,7 +25,7 @@ class Patient:
         self.admissionList = []#i assume that a patient can have mutiple admissions, but not concurrent, i dont keep a check of that, since it is not specified, and also able to just look at last entry.
         #there is an argument of having a patient admission relation.
     def __str__(self):
-        return f'{self.name},{self.SSN},{self.patientID}'
+        return f'patients name {self.name}, SSN : {self.SSN}, patientID :{self.patientID}'
     
 
 class Doctor:
@@ -48,10 +48,8 @@ def createDataset():
         
         patient = Patient("Testperson"+str(i+1),random.randint(0000,9999))
         patientDict[patient.patientID] = patient
-        print(patient.patientID)
         doctorForPatient = [doctorDict[str(random.randint(1,4))]]
         admission = Admission("A", patient, doctorForPatient)
-        print(doctorForPatient)
         patient.admissionList.append(admission)
         AdmissionDict[admission.admissionID] = admission
     return doctorDict,patientDict,AdmissionDict
@@ -67,13 +65,11 @@ class Manage(Resource):
     @app.route('/getPatient', methods=['GET'])
     def get(): #using id instead of SSN since the doctor might not be allowed to know SSN if they arent their patient
         args = request.args
-        print(args)
         patientID = args.get('patientID',default="0", type=str)
         doctorID = args.get('doctorID',default="0", type=str)
         patient = patientDict.get(patientID)
         #checks each admission, and sees if the doctor have worked with the patient before
         for admissions in patient.admissionList:
-            print(admissions.doctors)
             for doctors in admissions.doctors:
                 print(doctors)
                 if doctorID == doctors.ID:
